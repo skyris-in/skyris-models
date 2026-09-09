@@ -18,10 +18,10 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # Use HF_SPACE_REPO secret if configured, otherwise default to skyris-in/skyris-models
+          git config lfs.allowincompletepush true
           HF_TARGET="${{ secrets.HF_SPACE_REPO }}"
           if [ -z "$HF_TARGET" ]; then
-            HF_TARGET="skyris-in/skyris-models"
+            HF_TARGET="Shaan1209/skyris-models"
           fi
-          echo "Syncing to https://huggingface.co/spaces/Shaan1209/skyris-models"
-          git push --force https://PrakharSinghOnGit:$HF_TOKEN@huggingface.co/spaces/Shaan1209/skyris-models HEAD:refs/heads/main
+          echo "Syncing to https://huggingface.co/spaces/$HF_TARGET"
+          git push --force https://PrakharSinghOnGit:$HF_TOKEN@huggingface.co/spaces/$HF_TARGET HEAD:refs/heads/main
