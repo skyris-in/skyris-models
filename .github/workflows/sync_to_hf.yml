@@ -14,14 +14,21 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Hugging Face Hub CLI
+        run: pip install --upgrade "huggingface_hub[cli]"
+
       - name: Push to Hugging Face Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git config lfs.allowincompletepush true
           HF_TARGET="${{ secrets.HF_SPACE_REPO }}"
           if [ -z "$HF_TARGET" ]; then
             HF_TARGET="Shaan1209/skyris-models"
           fi
-          echo "Syncing to https://huggingface.co/spaces/$HF_TARGET"
-          git push --force https://PrakharSinghOnGit:$HF_TOKEN@huggingface.co/spaces/$HF_TARGET HEAD:refs/heads/main
+          echo "Syncing to Hugging Face Space: $HF_TARGET"
+          huggingface-cli upload "$HF_TARGET" . . --repo-type=space --token="$HF_TOKEN" --exclude ".git*"
