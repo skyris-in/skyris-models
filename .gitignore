@@ -1,0 +1,19 @@
+# data
+data/
+
+# python
+__pycache__/
+*.pyc
+
+# env
+.venv/
+
+# logs
+*.log
+
+# notebooks checkpoints
+.ipynb_checkpoints/
+
+# environment
+.env
+

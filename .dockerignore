@@ -1,0 +1,16 @@
+**/.git
+**/node_modules
+**/__pycache__
+**/.expo
+**/.next
+*.pyc
+*.pyo
+.env
+.venv/
+venv/
+env/
+.pytest_cache/
+.vscode/
+*.h5
+*.pkl
+# Ignore large model files if they are downloaded via code
