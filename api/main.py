@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, WebSocket, WebSocketDisconnect
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
@@ -149,9 +150,12 @@ class SensorResetRequest(BaseModel):
 # -----------------------------
 
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 def root():
-    return {"message": "Skyris Backend Data & MQTT Server is running."}
+    index_path = Path(__file__).resolve().parent / "static" / "index.html"
+    if index_path.exists():
+        return FileResponse(index_path, media_type="text/html")
+    return HTMLResponse("<h1>Skyris Models API is running</h1><p><a href='/docs'>Swagger Docs</a> | <a href='/health'>Health</a></p>")
 
 
 @app.get("/health")

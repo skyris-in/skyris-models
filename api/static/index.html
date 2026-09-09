@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skyris Models API Status & Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              500: '#0284c7',
+              600: '#0369a1',
+              900: '#082f49',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.9); }
+    }
+    .pulse-animation {
+      animation: pulse-dot 2s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-cyan-500 selection:text-white flex flex-col">
+  <!-- Top Navigation -->
+  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 text-xl">
+          🛰️
+        </div>
+        <div>
+          <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+            Skyris Models API
+            <span class="text-xs font-mono font-medium px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-800/60 text-cyan-300">v0.1.0</span>
+          </h1>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3">
+        <a href="/docs" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-sm font-semibold transition-all shadow-md shadow-cyan-500/20">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+          Swagger Docs
+        </a>
+        <a href="/redoc" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium border border-slate-700 transition-all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          ReDoc
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-10 space-y-8">
+    <!-- Hero Status Card -->
+    <div class="relative overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-b from-slate-900/90 to-slate-950 p-6 sm:p-8 shadow-2xl">
+      <div class="absolute -top-24 -right-24 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        <div class="space-y-2">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/60 text-emerald-400 text-xs font-mono uppercase tracking-wider" id="status-badge">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-animation"></span>
+            <span id="status-text">Checking System Status...</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            Skyris Inference & MQTT Streaming Engine
+          </h2>
+          <p class="text-slate-400 text-sm sm:text-base max-w-2xl">
+            Real-time multimodal risk inference service serving computer vision models, tabular ensemble classifiers, explainable AI (SHAP & LLM), and bi-directional WebSocket streams.
+          </p>
+        </div>
+        <div class="flex flex-col gap-3 min-w-[200px]">
+          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 flex items-center justify-between">
+            <span class="text-xs font-medium text-slate-400">Response Latency</span>
+            <span class="text-xs font-mono font-bold text-cyan-400" id="latency-text">-- ms</span>
+          </div>
+          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 flex items-center justify-between">
+            <span class="text-xs font-medium text-slate-400">Last Checked</span>
+            <span class="text-xs font-mono text-slate-300" id="last-checked">Just now</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Access Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <!-- Swagger Card -->
+      <a href="/docs" class="group relative rounded-xl border border-slate-800 bg-slate-900/50 hover:bg-slate-900 hover:border-cyan-500/50 transition-all p-5 flex flex-col justify-between space-y-4">
+        <div class="space-y-2">
+          <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+          </div>
+          <h3 class="text-base font-bold text-white group-hover:text-cyan-400 transition-colors">Interactive API Docs (Swagger)</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Test and inspect all REST endpoints directly in your browser with interactive schemas and live payloads.
+          </p>
+        </div>
+        <div class="text-xs font-semibold text-cyan-400 flex items-center gap-1">
+          Open Swagger UI &rarr;
+        </div>
+      </a>
+
+      <!-- ReDoc Card -->
+      <a href="/redoc" class="group relative rounded-xl border border-slate-800 bg-slate-900/50 hover:bg-slate-900 hover:border-purple-500/50 transition-all p-5 flex flex-col justify-between space-y-4">
+        <div class="space-y-2">
+          <div class="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          </div>
+          <h3 class="text-base font-bold text-white group-hover:text-purple-400 transition-colors">Clean Reference (ReDoc)</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Detailed, clean 3-panel OpenAPI reference for developers and client integration.
+          </p>
+        </div>
+        <div class="text-xs font-semibold text-purple-400 flex items-center gap-1">
+          Open ReDoc &rarr;
+        </div>
+      </a>
+
+      <!-- Health Raw Endpoint -->
+      <a href="/health" target="_blank" class="group relative rounded-xl border border-slate-800 bg-slate-900/50 hover:bg-slate-900 hover:border-emerald-500/50 transition-all p-5 flex flex-col justify-between space-y-4">
+        <div class="space-y-2">
+          <div class="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-base font-bold text-white group-hover:text-emerald-400 transition-colors">JSON Health Probe</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Direct JSON health check endpoint for monitoring tools, container orchestrators, and uptime probes.
+          </p>
+        </div>
+        <div class="text-xs font-semibold text-emerald-400 flex items-center gap-1">
+          View /health JSON &rarr;
+        </div>
+      </a>
+    </div>
+
+    <!-- Endpoints Reference Table -->
+    <div class="rounded-2xl border border-slate-800 bg-slate-900/40 overflow-hidden shadow-lg">
+      <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+        <h3 class="text-sm font-bold text-white tracking-wide uppercase">Core Endpoints & Protocols</h3>
+        <span class="text-xs font-mono text-slate-400">FastAPI + WebSockets</span>
+      </div>
+      <div class="divide-y divide-slate-800/60 font-mono text-xs">
+        <!-- Endpoint row 1 -->
+        <div class="px-6 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-slate-800/30 transition-colors">
+          <div class="flex items-center gap-3">
+            <span class="px-2 py-0.5 rounded font-bold text-[10px] bg-emerald-950 border border-emerald-800 text-emerald-400">GET</span>
+            <a href="/health" class="text-slate-200 hover:text-cyan-400 transition-colors">/health</a>
+          </div>
+          <span class="text-slate-400 font-sans text-xs">Service health status & ping</span>
+        </div>
+        <!-- Endpoint row 2 -->
+        <div class="px-6 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-slate-800/30 transition-colors">
+          <div class="flex items-center gap-3">
+            <span class="px-2 py-0.5 rounded font-bold text-[10px] bg-blue-950 border border-blue-800 text-blue-400">POST</span>
+            <span class="text-slate-200">/init</span>
+          </div>
+          <span class="text-slate-400 font-sans text-xs">Device & sensor initial sync handshake</span>
+        </div>
+        <!-- Endpoint row 3 -->
+        <div class="px-6 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-slate-800/30 transition-colors">
+          <div class="flex items-center gap-3">
+            <span class="px-2 py-0.5 rounded font-bold text-[10px] bg-blue-950 border border-blue-800 text-blue-400">POST</span>
+            <span class="text-slate-200">/image/</span>
+          </div>
+          <span class="text-slate-400 font-sans text-xs">Computer Vision camera inference (DenseNet / CNN)</span>
+        </div>
+        <!-- Endpoint row 4 -->
+        <div class="px-6 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-slate-800/30 transition-colors">
+          <div class="flex items-center gap-3">
+            <span class="px-2 py-0.5 rounded font-bold text-[10px] bg-blue-950 border border-blue-800 text-blue-400">POST</span>
+            <span class="text-slate-200">/data/</span>
+          </div>
+          <span class="text-slate-400 font-sans text-xs">Tabular environmental risk classification (XGBoost)</span>
+        </div>
+        <!-- Endpoint row 5 -->
+        <div class="px-6 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-slate-800/30 transition-colors">
+          <div class="flex items-center gap-3">
+            <span class="px-2 py-0.5 rounded font-bold text-[10px] bg-purple-950 border border-purple-800 text-purple-400">WS</span>
+            <span class="text-slate-200">/ws/sensor/{device_id}/</span>
+          </div>
+          <span class="text-slate-400 font-sans text-xs">Real-time bi-directional stream for individual sensor node</span>
+        </div>
+        <!-- Endpoint row 6 -->
+        <div class="px-6 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-slate-800/30 transition-colors">
+          <div class="flex items-center gap-3">
+            <span class="px-2 py-0.5 rounded font-bold text-[10px] bg-purple-950 border border-purple-800 text-purple-400">WS</span>
+            <span class="text-slate-200">/ws/explanation/</span>
+          </div>
+          <span class="text-slate-400 font-sans text-xs">Real-time Explainable AI (SHAP & LLM) stream</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>&copy; 2026 Skyris Platform &bull; Real-time AI Risk Analytics</p>
+      <div class="flex items-center space-x-4">
+        <a href="https://github.com/skyris-in" target="_blank" class="hover:text-slate-300 transition-colors">GitHub</a>
+        <a href="https://huggingface.co/spaces" target="_blank" class="hover:text-slate-300 transition-colors">Hugging Face Space</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    async function checkHealth() {
+      const startTime = performance.now();
+      const statusBadge = document.getElementById('status-badge');
+      const statusText = document.getElementById('status-text');
+      const latencyText = document.getElementById('latency-text');
+      const lastChecked = document.getElementById('last-checked');
+
+      try {
+        const res = await fetch('/health');
+        const endTime = performance.now();
+        const latency = Math.round(endTime - startTime);
+
+        if (res.ok) {
+          statusBadge.className = 'inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/60 text-emerald-400 text-xs font-mono uppercase tracking-wider';
+          statusText.textContent = 'Operational & Healthy';
+          latencyText.textContent = `${latency} ms`;
+          lastChecked.textContent = new Date().toLocaleTimeString();
+        } else {
+          throw new Error('Non-200 response');
+        }
+      } catch (err) {
+        statusBadge.className = 'inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-950/80 border border-rose-800/60 text-rose-400 text-xs font-mono uppercase tracking-wider';
+        statusText.textContent = 'Degraded / Unreachable';
+        latencyText.textContent = 'Error';
+        lastChecked.textContent = new Date().toLocaleTimeString();
+      }
+    }
+
+    checkHealth();
+    setInterval(checkHealth, 15000);
+  </script>
+</body>
+</html>
