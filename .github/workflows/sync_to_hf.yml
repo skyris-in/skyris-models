@@ -25,10 +25,23 @@ jobs:
       - name: Push to Hugging Face Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_SPACE_REPO: ${{ secrets.HF_SPACE_REPO }}
         run: |
-          HF_TARGET="${{ secrets.HF_SPACE_REPO }}"
-          if [ -z "$HF_TARGET" ]; then
-            HF_TARGET="Shaan1209/skyris-models"
-          fi
-          echo "Syncing to Hugging Face Space: $HF_TARGET"
-          huggingface-cli upload "$HF_TARGET" . . --repo-type=space --token="$HF_TOKEN" --exclude ".git*"
+          python3 - << 'EOF'
+          import os
+          from huggingface_hub import HfApi
+
+          token = os.environ.get("HF_TOKEN")
+          target = os.environ.get("HF_SPACE_REPO") or "Shaan1209/skyris-models"
+          target = target.strip()
+          
+          print(f"Syncing repository to Hugging Face Space: {target}")
+          api = HfApi(token=token)
+          api.upload_folder(
+              folder_path=".",
+              repo_id=target,
+              repo_type="space",
+              ignore_patterns=[".git*", ".github*", "__pycache__*", "*.pyc"],
+          )
+          print("Successfully uploaded to Hugging Face Space!")
+          EOF
